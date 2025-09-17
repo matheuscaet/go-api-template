@@ -8,10 +8,7 @@ import (
 )
 
 var (
-	RedisHost     = os.Getenv("REDIS_HOST")
-	RedisPort     = os.Getenv("REDIS_PORT")
-	RedisPassword = os.Getenv("REDIS_PASSWORD")
-	RedisDB       = os.Getenv("REDIS_DB")
+	MongoURI = os.Getenv("MONGO_URI")
 )
 
 func LoadEnvVariables() {
