@@ -1,6 +1,12 @@
 package handlers
 
-import "net/http"
+import (
+	"encoding/json"
+	"net/http"
+
+	"github.com/matheuscaet/go-api-template/business"
+	task "github.com/matheuscaet/go-api-template/business/types"
+)
 
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
@@ -8,23 +14,57 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetTasks(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("OK GET"))
+	tasks, err := business.NewTaskService().GetTasks(r.Context())
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	json.NewEncoder(w).Encode(tasks)
 }
 
 func CreateTask(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("OK POST"))
+	var task task.Task
+	err := json.NewDecoder(r.Body).Decode(&task)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	task, err = business.NewTaskService().CreateTask(r.Context(), task)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	json.NewEncoder(w).Encode(task)
 }
 
 func UpdateTask(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("OK PUT"))
+	var task task.Task
+	err := json.NewDecoder(r.Body).Decode(&task)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	task, err = business.NewTaskService().UpdateTask(r.Context(), task)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	json.NewEncoder(w).Encode(task)
 }
 
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("OK DELETE"))
+	err := business.NewTaskService().DeleteTask(r.Context(), r.URL.Query().Get("id"))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	json.NewEncoder(w).Encode(map[string]string{"message": "Task deleted"})
 }
 
 func HandleTasks(w http.ResponseWriter, r *http.Request) {

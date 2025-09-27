@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	MongoURI = os.Getenv("MONGO_URI")
+	MongoURI = ""
 )
 
 func LoadEnvVariables() {
@@ -16,4 +16,5 @@ func LoadEnvVariables() {
 	if err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
+	MongoURI = os.Getenv("MONGO_URI")
 }
