@@ -6,6 +6,7 @@ import (
 
 	"github.com/matheuscaet/go-api-template/business"
 	task "github.com/matheuscaet/go-api-template/business/types"
+	"github.com/matheuscaet/go-api-template/internal/config"
 )
 
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
@@ -86,5 +87,5 @@ func HandleTasks(w http.ResponseWriter, r *http.Request) {
 func StartServer() {
 	http.HandleFunc("/health", HealthCheck)
 	http.HandleFunc("/tasks", HandleTasks)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":"+config.Port, nil)
 }
