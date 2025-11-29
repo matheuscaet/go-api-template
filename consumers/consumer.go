@@ -16,11 +16,12 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/matheuscaet/go-api-template/internal/config"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 var (
-	uri               = flag.String("uri", "amqps://shjpeuoo:0_4IxD-wmf0oJ2wRrARCWx3oEYaGEadX@porpoise.rmq.cloudamqp.com/shjpeuoo", "AMQP URI")
+	uri               = flag.String("uri", config.RabbitMQURI, "AMQP URI")
 	exchange          = flag.String("exchange", "test-exchange", "Durable, non-auto-deleted AMQP exchange name")
 	exchangeType      = flag.String("exchange-type", "direct", "Exchange type - direct|fanout|topic|x-custom")
 	queue             = flag.String("queue", "test-queue", "Ephemeral AMQP queue name")

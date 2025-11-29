@@ -8,8 +8,9 @@ import (
 )
 
 var (
-	MongoURI = ""
-	Port     = ""
+	MongoURI    = ""
+	RabbitMQURI = ""
+	Port        = ""
 )
 
 func LoadEnvVariables() {
@@ -18,6 +19,7 @@ func LoadEnvVariables() {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 	MongoURI = os.Getenv("MONGO_URI")
+	RabbitMQURI = os.Getenv("RABBITMQ_URI")
 	Port = os.Getenv("PORT")
 	if Port == "" {
 		Port = "8080"
