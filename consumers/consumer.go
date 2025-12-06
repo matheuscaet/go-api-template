@@ -9,6 +9,8 @@
 package consumer
 
 import (
+	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -16,12 +18,14 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/matheuscaet/go-api-template/business"
+	task "github.com/matheuscaet/go-api-template/business/types"
 	"github.com/matheuscaet/go-api-template/internal/config"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 var (
-	uri               = flag.String("uri", config.RabbitMQURI, "AMQP URI")
+	uri               = flag.String("uri", "", "AMQP URI")
 	exchange          = flag.String("exchange", "test-exchange", "Durable, non-auto-deleted AMQP exchange name")
 	exchangeType      = flag.String("exchange-type", "direct", "Exchange type - direct|fanout|topic|x-custom")
 	queue             = flag.String("queue", "test-queue", "Ephemeral AMQP queue name")
@@ -36,6 +40,11 @@ var (
 
 func Start() {
 	Log.Printf("Starting consumer")
+	*uri = config.RabbitMQURI
+	*exchange = config.RabbitMQExchange
+	*queue = config.RabbitMQQueue
+	*bindingKey = config.RabbitMQRoutingKey
+	*exchangeType = config.RabbitMQExchangeType
 	flag.Parse()
 	c, err := NewConsumer(*uri, *exchange, *exchangeType, *queue, *bindingKey, *consumerTag)
 	if err != nil {
@@ -187,6 +196,12 @@ func handle(deliveries <-chan amqp.Delivery, done chan error) {
 				d.DeliveryTag,
 				d.Body,
 			)
+			var task task.Task
+			err := json.Unmarshal(d.Body, &task)
+			if err != nil {
+				ErrLog.Fatalf("error unmarshalling task: %s", err)
+			}
+			task, err = business.NewTaskService().CreateTask(context.Background(), task)
 		} else {
 			if deliveryCount%65536 == 0 {
 				Log.Printf("delivery count %d", deliveryCount)
