@@ -2,6 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/matheuscaet/go-api-template/api/handlers"
 	consumer "github.com/matheuscaet/go-api-template/consumers"
@@ -11,6 +15,20 @@ import (
 func main() {
 	fmt.Println("Starting Go API")
 	config.LoadEnvVariables()
-	consumer.Start()
-	handlers.StartServer()
+
+	go func() {
+		log.Println("Starting RabbitMQ consumer in goroutine...")
+		consumer.Start()
+	}()
+
+	go func() {
+		log.Println("Starting API server in goroutine...")
+		handlers.StartServer()
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+	<-quit
+
+	log.Println("Shutting down gracefully...")
 }

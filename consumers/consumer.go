@@ -51,8 +51,6 @@ func Start() {
 		ErrLog.Fatalf("%s", err)
 	}
 
-	SetupCloseHandler(c)
-
 	Log.Printf("running until Consumer is done")
 	<-c.done
 }
