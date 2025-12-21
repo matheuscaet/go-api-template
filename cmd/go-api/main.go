@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/matheuscaet/go-api-template/api/grpc"
 	"github.com/matheuscaet/go-api-template/api/handlers"
 	consumer "github.com/matheuscaet/go-api-template/consumers"
 	"github.com/matheuscaet/go-api-template/internal/config"
@@ -24,6 +25,11 @@ func main() {
 	go func() {
 		log.Println("Starting API server in goroutine...")
 		handlers.StartServer()
+	}()
+
+	go func() {
+		log.Println("Starting gRPC server in goroutine...")
+		grpc.StartGRPCServer()
 	}()
 
 	quit := make(chan os.Signal, 1)

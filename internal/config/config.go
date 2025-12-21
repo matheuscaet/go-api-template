@@ -15,6 +15,7 @@ var (
 	RabbitMQQueue        = "TASKS_QUEUE"
 	RabbitMQRoutingKey   = "task.create"
 	Port                 = "8080"
+	GRPCPort             = "50051"
 )
 
 func LoadEnvVariables() {
@@ -29,4 +30,8 @@ func LoadEnvVariables() {
 	RabbitMQQueue = os.Getenv("RABBITMQ_QUEUE")
 	RabbitMQRoutingKey = os.Getenv("RABBITMQ_ROUTING_KEY")
 	Port = os.Getenv("PORT")
+	grpcPort := os.Getenv("GRPC_PORT")
+	if grpcPort != "" {
+		GRPCPort = grpcPort
+	}
 }

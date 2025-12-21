@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package task;
+
+option go_package = "github.com/matheuscaet/go-api-template/proto/task";
+
+service TaskService {
+  rpc GetTasks(GetTasksRequest) returns (GetTasksResponse);
+  rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse);
+  rpc UpdateTask(UpdateTaskRequest) returns (UpdateTaskResponse);
+  rpc DeleteTask(DeleteTaskRequest) returns (DeleteTaskResponse);
+}
+
+message Task {
+  string id = 1;
+  string title = 2;
+  bool done = 3;
+}
+
+message GetTasksRequest {}
+
+message GetTasksResponse {
+  repeated Task tasks = 1;
+}
+
+message CreateTaskRequest {
+  string title = 1;
+  bool done = 2;
+}
+
+message CreateTaskResponse {
+  Task task = 1;
+}
+
+message UpdateTaskRequest {
+  string id = 1;
+  string title = 2;
+  bool done = 3;
+}
+
+message UpdateTaskResponse {
+  Task task = 1;
+}
+
+message DeleteTaskRequest {
+  string id = 1;
+}
+
+message DeleteTaskResponse {
+  string message = 1;
+}
+
